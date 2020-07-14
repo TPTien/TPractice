@@ -1,0 +1,35 @@
+<resources>
+    <string name="app_name">TPractice</string>
+    <string name="singUp">Đăng kí</string>
+    <string name="login">Đăng nhập</string>
+    <string name="ifNotAcccount">Bạn chưa có tài khoản?</string>
+    <string name="name">Tên đăng nhập</string>
+    <string name="password">Mật khẩu</string>
+    <string name="createAccount">Tạo tài khoản của bạn</string>
+    <string name="gotAccount">Đã có tài khoản?</string>
+    <string name="search">Search...</string>
+    <string name="explain">Giải thích</string>
+    <string name="your_answer">Your Answer</string>
+    <string name="question">Câu hỏi</string>
+    <string name="delete_question">Xóa câu hỏi</string>
+    <string name="score">Điểm số</string>
+    <string name="add_answer">Thêm đáp án</string>
+    <string name="nameTest">Tên bài thi</string>
+    <string name="topic">Chủ đề</string>
+    <string name="description">Mô tả</string>
+    <string name="correctAnswer">Đáp án đúng</string>
+    <string name="time">(phút)</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="newest_test">Bài mới nhất</string>
+    <string name="more">Tất cả</string>
+    <string name="main_alert_quit">Bạn thật sự muốn thoát</string>
+    <string name="all_yes">Đồng ý</string>
+    <string name="all_no">Không</string>
+    <string name="addToFavoriteList">Danh sách yêu thich</string>
+    <string name="yes">Đồng ý</string>
+    <string name="addFavoriteSuccess">Thêm thành công !</string>
+    <string name="no">Không</string>
+    <string name="deleteSuccess">Xóa thành công!</string>
+    <string name="notExist">Không tồn tại!</string>
+</resources>

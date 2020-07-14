@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item android:id="@+id/item_new"
+    android:icon="@drawable/whathots_selected"
+    android:title="Mới nhất"
+    app:showAsAction="ifRoom"
+    android:contentDescription="Mới nhất"/>
+
+<!--    <item android:id="@+id/item_yourSelf"-->
+<!--        android:icon="@drawable/yourself_selected"-->
+<!--        android:title="Bản thân"-->
+<!--        app:showAsAction="always"-->
+<!--        android:contentDescription="Thông tin bản thân"/>-->
+<!--    <item-->
+<!--        android:enabled="false"-->
+<!--        android:title=""-->
+<!--        app:showAsAction="never" />-->
+<!--    <item-->
+<!--        android:enabled="false"-->
+<!--        android:title="nothing"-->
+<!--        app:showAsAction="never"-->
+<!--        />-->
+    <item android:id="@+id/item_favorite"
+        android:enabled="true"
+        android:icon="@drawable/favorite_selected"
+        android:title="Yêu thích"
+        app:showAsAction="ifRoom"
+        android:contentDescription="Yêu thích"/>
+
+
+</menu>
