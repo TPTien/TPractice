@@ -31,7 +31,7 @@ public class ResultActivity extends AppCompatActivity {
     private  List<QuestionAndAnswer> questionAndAnswerList =new ArrayList<>();
     private ArrayList<String>yourAnswer= new ArrayList<>();
     private  int[]color =new int[]{Color.GREEN,Color.BLUE};
-    private TextView tv_nameTest,tv_score;
+    private TextView tv_nameTest,tv_score,tv_timDone,tv_numTrue;
     private RecyclerView mRecyclerView;
     private int timeDone,numRightQuestion,numWrongQuestion,score= 0;
     private float percentDone =0;
@@ -84,8 +84,12 @@ public class ResultActivity extends AppCompatActivity {
         tv_nameTest =findViewById(R.id.nameTest);
         tv_score=(TextView)findViewById(R.id.tv_score);
         btn_detailResult=(Button)findViewById(R.id.btn_detail);
+        tv_numTrue=(TextView)findViewById(R.id.tv_numRight);
+        tv_timDone=(TextView)findViewById(R.id.tv_timeDone);
         tv_nameTest.setText(test.getName());
-        tv_score.setText("Điểm: "+numRightQuestion+"/"+yourAnswer.size());
+        tv_numTrue.setText("Số câu đúng: "+numRightQuestion+"/"+yourAnswer.size());
+        tv_score.setText("Điểm: "+score);
+        tv_timDone.setText("Thời gian hoàn thành: "+timeDone+" phút");
         btn_detailResult.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

@@ -73,8 +73,13 @@ public class DoTestAdapter extends RecyclerView.Adapter<DoTestAdapter.ViewHolder
 //        if(currentItem.getImgUrlQuestion()==null){
 //            holder.img_question.setVisibility(View.GONE);
 //        }
+        if(currentItem.getImgUrlQuestion()!=null){
+            holder.img_question.setVisibility(View.VISIBLE);
+            Glide.with(mContext).load(currentItem.getImgUrlQuestion()).into(holder.img_question);
+        }else {
+            holder.img_question.setVisibility(View.GONE);
+        }
 
-        Glide.with(mContext).load("https://tstudy.000webhostapp.com/TStudy/image/IMG_20200605_054004.jpg").into(holder.img_question);
         if(choice ==0){
             holder.tv_explain.setVisibility(View.GONE);
             choiceList=new ArrayList<>();
@@ -174,7 +179,7 @@ public class DoTestAdapter extends RecyclerView.Adapter<DoTestAdapter.ViewHolder
             tv_question=(TextView)itemView.findViewById(R.id.tv_question);
             tv_score=(TextView)itemView.findViewById(R.id.tv_score);
             tv_explain=(TextView)itemView.findViewById(R.id.tv_explain);
-            img_question=(ImageView)itemView.findViewById(R.id.img_question);
+            img_question=(ImageView)itemView.findViewById(R.id.img_questionDetail);
             img_trueOrWrong=(ImageView)itemView.findViewById(R.id.img_trueOrWrong);
             btn_back=(Button)itemView.findViewById(R.id.btn_back);
             btn_next=(Button)itemView.findViewById(R.id.btn_next);

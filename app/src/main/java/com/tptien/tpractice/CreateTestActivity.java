@@ -279,10 +279,8 @@ public class CreateTestActivity extends AppCompatActivity {
                             @Override
                             public void onNext(String s) {
                                 Log.d("response",s);
-                                if(s!=null){
-                                    Toast.makeText(CreateTestActivity.this,"Tạo thành công !",Toast.LENGTH_SHORT).show();
-                                    finish();
-                                }
+                                Toast.makeText(CreateTestActivity.this,"Tạo thành công !",Toast.LENGTH_SHORT).show();
+                                finish();
                             }
 
                             @Override
