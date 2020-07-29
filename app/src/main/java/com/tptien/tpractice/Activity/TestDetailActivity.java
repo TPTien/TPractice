@@ -51,11 +51,14 @@ public class TestDetailActivity extends AppCompatActivity {
     private SharedPreferences mSharedPreferences;
     private String idUser;
     private List<String> yourAnswer =new ArrayList<>();
-    private List<QuestionAndAnswer> fullList =new ArrayList<>();
+    private List<QuestionAndAnswer> mListAnswer=new ArrayList<>() ;
     private int numWrongQuestion,numRightQuestion =0 ;
     private float percentDone =0;
     private int score =0;
     private int timeDone =0;
+    private int totalScore=0;
+    private CountDownTimer mCountDownTimer;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -100,9 +103,9 @@ public class TestDetailActivity extends AppCompatActivity {
 
 
     }
-    private void finishTest(String idUser,String idTest,int timeDone,String percentDone,int numWrongQuestion,int numRightQuestion){
+    private void finishTest(String idUser,String idTest,int timeDone,String percentDone,int score,int numWrongQuestion,int numRightQuestion){
         DataService dataService=APIService.getService();
-        Observable<String>observable =dataService.insertOrUpdateTester(idUser,idTest,timeDone,percentDone,numWrongQuestion,numRightQuestion);
+        Observable<String>observable =dataService.insertOrUpdateTester(idUser,idTest,timeDone,percentDone,score,numWrongQuestion,numRightQuestion);
         observable.subscribeOn(Schedulers.newThread()).observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Observer<String>() {
                     @Override
@@ -130,7 +133,7 @@ public class TestDetailActivity extends AppCompatActivity {
 
         min=timer*60*1000;
         tempMin =timer;
-        new CountDownTimer(min,1000){
+        mCountDownTimer= new CountDownTimer(min,1000){
 
             @Override
             public void onTick(long l) {
@@ -207,12 +210,12 @@ public class TestDetailActivity extends AppCompatActivity {
 
                     @Override
                     public void onComplete() {
-                        getFullListQuestionAnswer(mListQuestionAndAnswers,multipleChoiceList);
+                        getFullListQuestionAnswer(mListQuestionAndAnswers,multipleChoiceList,mListAnswer);
+                        setTimer(Integer.parseInt(testInfor.getTime()));
                     }
                 });
     }
-    private void getFullListQuestionAnswer(List<QuestionAndAnswer> listQuestion,List<MultipleChoice>choiceList){
-
+    private void getFullListQuestionAnswer(final List<QuestionAndAnswer> listQuestion, List<MultipleChoice> choiceList,final List<QuestionAndAnswer> mListAnswer){
         for(int i=0;i<listQuestion.size();i++){
             ArrayList<MultipleChoice> listTemp= new ArrayList<>();
             for(int j=0;j<choiceList.size();j++){
@@ -222,9 +225,10 @@ public class TestDetailActivity extends AppCompatActivity {
                     //choiceList.remove(j);
                 }
             }
+            totalScore+=Integer.parseInt(listQuestion.get(i).getScore());
             listQuestion.get(i).setListAnswer(listTemp);
             Log.d("list answer size", String.valueOf(listQuestion.get(i).getListAnswer().size()));
-
+            mListAnswer.add(i,new QuestionAndAnswer(listQuestion.get(i).getIdQuestion(),"",listQuestion.get(i).getScore()));
 
         }
         //getFullListQuestionAnswer(mListQuestionAndAnswers,multipleChoiceList);
@@ -243,6 +247,11 @@ public class TestDetailActivity extends AppCompatActivity {
                 mRecyclerView.smoothScrollToPosition(pos+1);
 
             }
+            @Override
+            public void onAnswerClick(int pos, String answer) {
+                mListAnswer.get(pos).setCorrectAnswer(answer);
+            }
+
         });
         mRecyclerView.setLayoutManager(new LinearLayoutManager(TestDetailActivity.this,LinearLayoutManager.HORIZONTAL,false));
         mRecyclerView.setAdapter(mDoTestAdapter);
@@ -251,74 +260,68 @@ public class TestDetailActivity extends AppCompatActivity {
         btn_done.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                yourAnswer = mDoTestAdapter.getYourAnswer();
-                Log.d("yourAnswerSize", String.valueOf(yourAnswer.size()));
-                fullList = (ArrayList<QuestionAndAnswer>) mDoTestAdapter.getData();
-                if(yourAnswer.size()<listQuestion.size()){
-                    Toast.makeText(TestDetailActivity.this, "Vui lòng hoàn thành bài test trước khi nộp!", Toast.LENGTH_SHORT).show();
-                }else {
-//                    if(!isDone){
-//                        for(int i =0;i<yourAnswer.size();i++){
-//                            if(yourAnswer.get(i).equals("")) {
-//                                Toast.makeText(TestDetailActivity.this, "Vui lòng hoàn thành bài test trước khi nộp!", Toast.LENGTH_SHORT).show();
-//                                mRecyclerView.smoothScrollToPosition(i);
-//                                break;
-//                            }else {
-//                                isDone =true;
-//
-//
-//                            }
-//                        }
-//
-//                    }else {
-                        for (int i= 0;i<yourAnswer.size();i++){
-                            String correct =listQuestion.get(i).getCorrectAnswer();
-                            if(yourAnswer.get(i).equals(correct)){
-                                numRightQuestion ++ ;
-                                score+=Integer.parseInt(listQuestion.get(i).getScore());
-                                Log.d("numRight", String.valueOf(numRightQuestion));
-                            }else {
-                                numWrongQuestion ++;
-                                Log.d("numWrong", String.valueOf(numWrongQuestion));
-                            }
-                            Log.d("yourAnswerInDetail",yourAnswer.get(i));
-                            Log.d("correctAnswer",listQuestion.get(i).getCorrectAnswer() +listQuestion.size());
+                mCountDownTimer.cancel();
+                //                yourAnswer = mDoTestAdapter.getYourAnswer();
+//                Log.d("yourAnswerSize", String.valueOf(yourAnswer.size()));
+                Log.d("ReturnAnswerFromAdap", String.valueOf(mListAnswer.size())+ mListAnswer.get(0).getCorrectAnswer());
+                Log.d("correctAnswer1",listQuestion.get(0).getCorrectAnswer() );
+                //fullList = (ArrayList<QuestionAndAnswer>) mDoTestAdapter.getData();
+//                if(mListAnswer.size()!=listQuestion.size()){
+//                    Toast.makeText(TestDetailActivity.this, "Vui lòng hoàn thành bài test trước khi nộp!", Toast.LENGTH_SHORT).show();
+//                }else {
+                if(!isDone){
+                    for(int i =0;i<mListAnswer.size();i++){
+                        if(mListAnswer.get(i).getCorrectAnswer().equals("")) {
+                            Toast.makeText(TestDetailActivity.this, "Vui lòng hoàn thành bài test trước khi nộp!", Toast.LENGTH_SHORT).show();
+                            mRecyclerView.smoothScrollToPosition(i);
+                            break;
+                        }else {
+                            isDone =true;
                         }
-                        percentDone =(float) (numRightQuestion*100.0/listQuestion.size());
-                        Log.d("percentDone", String.valueOf(percentDone));
-                        Log.d("score", String.valueOf(score));
-                        String[] time=tv_timer.getText().toString().split(":");
-                        timeDone =Integer.parseInt(testInfor.getTime()) - Integer.parseInt(time[0]);
-                        Log.d("timeDone", String.valueOf(timeDone));
-                        Toast.makeText(TestDetailActivity.this,"Nộp thành công",Toast.LENGTH_SHORT).show();
-
-                        //
-                        finishTest(idUser,idTest,timeDone,String.valueOf(percentDone),numWrongQuestion,numRightQuestion);
-                        Intent intent =new Intent(TestDetailActivity.this,ResultActivity.class);
-                        Bundle bundle =new Bundle();
-                        bundle.putParcelableArrayList("listQuestion", (ArrayList<? extends Parcelable>) listQuestion);
-                        bundle.putParcelable("testInfor",testInfor);
-                        bundle.putStringArrayList("listYourAnswer", (ArrayList<String>) yourAnswer);
-                        bundle.putInt("timeDone",timeDone);
-                        bundle.putInt("numWrong",numWrongQuestion);
-                        bundle.putInt("numRight",numRightQuestion);
-                        bundle.putFloat("percent",percentDone);
-                        bundle.putInt("score",score);
-                        intent.putExtras(bundle);
-                        startActivity(intent);
-                        finish();
-
-
                     }
+                }else {
+                    btn_done.setClickable(false);
+                    for (int i= 0;i<mListAnswer.size();i++){
+                        String correct =listQuestion.get(i).getCorrectAnswer();
+                        if(mListAnswer.get(i).getCorrectAnswer().equals(correct)){
+                            numRightQuestion ++ ;
+                            score+= Integer.parseInt(listQuestion.get(i).getScore());
+                            Log.d("numRight", String.valueOf(numRightQuestion));
+                        }else {
+                            numWrongQuestion ++;
+                            Log.d("numWrong", String.valueOf(numWrongQuestion));
+                        }
+                        Log.d("yourAnswerInDetail",mListAnswer.get(i).getCorrectAnswer());
+                    }
+                    percentDone =(float) (numRightQuestion*100.0/listQuestion.size());
+                    Log.d("percentDone", String.valueOf(percentDone));
+                    Log.d("score", String.valueOf(score));
+                    String[] time=tv_timer.getText().toString().split(":");
+                    timeDone = Integer.parseInt(testInfor.getTime()) - Integer.parseInt(time[0]);
+                    Log.d("timeDone", String.valueOf(timeDone));
+                    Toast.makeText(TestDetailActivity.this,"Nộp thành công", Toast.LENGTH_SHORT).show();
+                    //
+                    finishTest(idUser,idTest,timeDone, String.valueOf(percentDone),score,numWrongQuestion,numRightQuestion);
+                    Intent intent =new Intent(TestDetailActivity.this,ResultActivity.class);
+                    Bundle bundle =new Bundle();
+                    bundle.putParcelableArrayList("listQuestion", (ArrayList<? extends Parcelable>) mListQuestionAndAnswers);
+                    bundle.putParcelable("testInfor",testInfor);
+                    bundle.putStringArrayList("listYourAnswer", (ArrayList<String>) yourAnswer);
+                    bundle.putInt("timeDone",timeDone);
+                    bundle.putParcelableArrayList("yourAnswer", (ArrayList<? extends Parcelable>) mListAnswer);
+                    bundle.putInt("numWrong",numWrongQuestion);
+                    bundle.putInt("numRight",numRightQuestion);
+                    bundle.putInt("totalScore",totalScore);
+                    bundle.putFloat("percent",percentDone);
+                    bundle.putInt("score",score);
+                    intent.putExtras(bundle);
+                    startActivity(intent);
+                    finish();
                 }
+            }
 //                Log.d("yourAnswer",yourAnswer.get(0));
 //                Log.d("correctAnswer",listQuestion.get(0).getCorrectAnswer() +fullList.size());
-
-
-
-
         });
-
     }
     private void getDataTest(String idTest){
         DataService dataService = APIService.getService();
@@ -327,34 +330,26 @@ public class TestDetailActivity extends AppCompatActivity {
                 .subscribe(new Observer<Test>() {
                     @Override
                     public void onSubscribe(Disposable d) {
-
                     }
-
                     @Override
                     public void onNext(Test test) {
                         testInfor =test;
                         Log.d("testInfor", testInfor.getName());
-                        setTimer(Integer.parseInt(testInfor.getTime()));
+//                        setTimer(Integer.parseInt(testInfor.getTime()));
                         tv_numQuestion.setText(testInfor.getNumQuestion()+" Câu");
-
-
                     }
-
                     @Override
                     public void onError(Throwable e) {
                         e.printStackTrace();
                     }
-
                     @Override
                     public void onComplete() {
                     }
                 });
     }
-
     @Override
     public void onBackPressed() {
         finish();
         super.onBackPressed();
-
     }
 }

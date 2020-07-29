@@ -13,6 +13,7 @@ import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -32,7 +33,8 @@ public class QuestionAnswerAdapter extends RecyclerView.Adapter<QuestionAnswerAd
     private ArrayList<MultipleChoice> listAnswer;
     private QuestionCardListener mCardListener;
     public   AnswerAdapter answerAdapter;
-    private char temp ='B';
+    private char temp;
+    private int count=0;
     private List<String> answer;
 
     public interface QuestionCardListener{
@@ -60,6 +62,7 @@ public class QuestionAnswerAdapter extends RecyclerView.Adapter<QuestionAnswerAd
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         QuestionAndAnswer currentQuestion=mListQuestion.get(position);
+        answer =new ArrayList<>();
         holder.edt_question.setText(currentQuestion.getQuestion());
         holder.edt_explain.setText(currentQuestion.getExplain());
 
@@ -79,18 +82,24 @@ public class QuestionAnswerAdapter extends RecyclerView.Adapter<QuestionAnswerAd
         answerAdapter.setOnClickClearOnClick(new AnswerAdapter.ButtonClearOnClick() {
             @Override
             public void onButtonClearClick(int position1) {
+                count=0;
+                //answer.remove(currentQuestion.getListAnswer().get(position1));
                 mListQuestion.get(position).getListAnswer().remove(position1);
                 Log.d("position clear", String.valueOf(position1));
                 answerAdapter.notifyItemRemoved(position1);
-                answerAdapter.notifyDataSetChanged();
-                notifyDataSetChanged();
+                //answerAdapter.notifyDataSetChanged();
+                //notifyDataSetChanged();
 
 
             }
 
             @Override
             public void onSelectAnswerClick(int position, String answer) {
-
+                Log.d("yourAnswerInQAAdapter",answer);
+                currentQuestion.setCorrectAnswer(answer);
+                answerAdapter.notifyDataSetChanged();
+                //notifyDataSetChanged();
+                holder.tv_correctAnswer.setText(currentQuestion.getCorrectAnswer());
             }
         });
 
@@ -100,27 +109,28 @@ public class QuestionAnswerAdapter extends RecyclerView.Adapter<QuestionAnswerAd
             @Override
             public void onClick(View view) {
 
-                mListQuestion.get(position).getListAnswer().add(new MultipleChoice(String.valueOf(temp) +"."+" "));
+                mListQuestion.get(position).getListAnswer().add(new MultipleChoice(""));
 
                 Log.d("add_size", String.valueOf(mListQuestion.get(position).getListAnswer().size()));
-                //answerAdapter.notifyItemInserted(position);
+                answerAdapter.notifyItemInserted(position);
                 answerAdapter.notifyDataSetChanged();
+                holder.recyclerViewQuestion.smoothScrollToPosition(answerAdapter.getItemCount()-1);
 
 //                answerAdapter.notifyDataSetChanged();
-                notifyDataSetChanged();
-                temp++;
+
+                count=0;
             }
         });
         //get hint answers
 
-        answer =new ArrayList<>();
-        for (int i= 0;i<mListQuestion.get(position).getListAnswer().size();i++){
-            answer.add(mListQuestion.get(position).getListAnswer().get(i).getAnswer());
-        }
-        Log.d("listSize", String.valueOf(answer.size()));
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(mContext,android.R.layout.simple_list_item_1,answer);
-        holder.edt_correctAnswer.setAdapter(adapter);
-        holder.edt_correctAnswer.setText(currentQuestion.getCorrectAnswer());
+//        answer =new ArrayList<>();
+//        for (int i= 0;i<mListQuestion.get(position).getListAnswer().size();i++){
+//            answer.add(mListQuestion.get(position).getListAnswer().get(i).getAnswer());
+//        }
+//        Log.d("listSize", String.valueOf(answer.size()));
+//        ArrayAdapter<String> adapter = new ArrayAdapter<String>(mContext,android.R.layout.simple_list_item_1,answer);
+//        holder.edt_correctAnswer.setAdapter(adapter);
+//        holder.edt_correctAnswer.setText(currentQuestion.getCorrectAnswer());
 
     }
     private void getAllAnswer(int pos){
@@ -145,14 +155,14 @@ public class QuestionAnswerAdapter extends RecyclerView.Adapter<QuestionAnswerAd
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         private EditText edt_question,edt_explain,edt_scoreQuestion;
-        private AutoCompleteTextView edt_correctAnswer;
+        private TextView tv_correctAnswer;
         private ImageButton btn_selectImage,btn_deleteQuestion,btn_addAnswer;
         private ImageView imgQuestion;
         private RecyclerView recyclerViewQuestion;
         private QuestionCardListener mCardListener;
         public ViewHolder(@NonNull View itemView, final QuestionCardListener mCardListener) {
             super(itemView);
-            edt_correctAnswer =(AutoCompleteTextView) itemView.findViewById(R.id.edt_correctAnswer);
+            tv_correctAnswer =(TextView) itemView.findViewById(R.id.tv_correctAnswer);
             edt_scoreQuestion =(EditText)itemView.findViewById(R.id.edt_scoreQuestion);
             btn_deleteQuestion=(ImageButton)itemView.findViewById(R.id.btn_clearQuestion);
             edt_question=(EditText)itemView.findViewById(R.id.edt_question);
@@ -235,23 +245,23 @@ public class QuestionAnswerAdapter extends RecyclerView.Adapter<QuestionAnswerAd
 
                 }
             });
-            edt_correctAnswer.addTextChangedListener(new TextWatcher() {
-                @Override
-                public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-                }
-
-                @Override
-                public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                    mListQuestion.get(getAdapterPosition()).setCorrectAnswer(charSequence.toString());
-                    //notifyDataSetChanged();
-                }
-
-                @Override
-                public void afterTextChanged(Editable editable) {
-
-                }
-            });
+//            edt_correctAnswer.addTextChangedListener(new TextWatcher() {
+//                @Override
+//                public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+//
+//                }
+//
+//                @Override
+//                public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+//                    mListQuestion.get(getAdapterPosition()).setCorrectAnswer(charSequence.toString());
+//                    //notifyDataSetChanged();
+//                }
+//
+//                @Override
+//                public void afterTextChanged(Editable editable) {
+//
+//                }
+//            });
         }
     }
 }

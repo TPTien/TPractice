@@ -39,19 +39,22 @@ public class DoTestAdapter extends RecyclerView.Adapter<DoTestAdapter.ViewHolder
     private CardDoTestListener cardDoTestListener;
     private int prePosition =-1;
     private List<String> yourAnswer =new ArrayList<>();
-    private List<String>yourAnswerResult =new ArrayList<>();
+    private List<QuestionAndAnswer> yourAnswerResult =new ArrayList<>();
+    private List<QuestionAndAnswer>mListAnswer= new ArrayList<>();
     private boolean isHave = false;
     private int choice =0;
     //private List<MultipleChoice>multipleChoiceList;
     public interface CardDoTestListener{
         void onBackClick(int pos);
         void onNextClick(int pos);
+        void onAnswerClick(int pos, String answer);
     }
-    public DoTestAdapter(List<QuestionAndAnswer> mListTest1, Context mContext,int choice,List<String>yourAnswer) {
+    public DoTestAdapter(List<QuestionAndAnswer> mListTest1, Context mContext,int choice,List<QuestionAndAnswer>yourAnswer) {
         this.mListTest = mListTest1;
         this.mContext = mContext;
         this.choice =choice;
         this.yourAnswerResult =yourAnswer;
+
     }
     public void setOnClickListener(CardDoTestListener clickListener){
         this.cardDoTestListener=clickListener;
@@ -98,23 +101,24 @@ public class DoTestAdapter extends RecyclerView.Adapter<DoTestAdapter.ViewHolder
                 }
                 @Override
                 public void onSelectAnswerClick(int position1, String answer) {
-                    if(!yourAnswer.contains(answer)){
-                        yourAnswer.add(position,answer);
-                    }
-
-                    for(int i=0;i<mListTest.get(position).getListAnswer().size();i++){
-                        if(mListTest.get(position).getListAnswer().get(i).getAnswer().equals(answer)){
-                            isHave =true;
-                            break;
-                        }
-                    }
-                    if(isHave){
-                        yourAnswer.set(position,answer);
-                    }else {
-                        yourAnswer.add(position,answer);
-                    }
-
-                    Log.d("yourAnswerInAdapter",yourAnswer.get(position) + yourAnswer.size());
+//                    if(!yourAnswer.contains(answer)){
+//                        yourAnswer.add(position,answer);
+//                    }
+//
+//                    for(int i=0;i<mListTest.get(position).getListAnswer().size();i++){
+//                        if(mListTest.get(position).getListAnswer().get(i).getAnswer().equals(answer)){
+//                            isHave =true;
+//                            break;
+//                        }
+//                    }
+//                    if(isHave){
+//                        yourAnswer.set(position,answer);
+//                    }else {
+//                        yourAnswer.add(position,answer);
+//                    }
+//
+//                    Log.d("yourAnswerInAdapter",yourAnswer.get(position) + yourAnswer.size());
+                    cardDoTestListener.onAnswerClick(position,answer);
 
                 }
             });
@@ -140,14 +144,16 @@ public class DoTestAdapter extends RecyclerView.Adapter<DoTestAdapter.ViewHolder
             holder.btn_next.setVisibility(View.GONE);
             holder.btn_back.setVisibility(View.GONE);
             holder.mRecyclerView.setLayoutManager(new LinearLayoutManager(mContext));
-            if(yourAnswerResult.get(position).equals(mListTest.get(position).getCorrectAnswer())){
+            if(yourAnswerResult.get(position).getCorrectAnswer().equals(mListTest.get(position).getCorrectAnswer())){
                 holder.img_trueOrWrong.setImageDrawable(mContext.getResources().getDrawable(R.drawable.ic_baseline_done_24));
-                Log.d("thisIsTrue",yourAnswerResult.get(position));
+                Log.d("thisIsTrue",yourAnswerResult.get(position).getCorrectAnswer());
                 mAnswerAdapter =new AnswerAdapter(currentItem.getListAnswer(),mContext,2,currentItem.getCorrectAnswer(),null);
 
             }else {
-                holder.img_trueOrWrong.setImageDrawable(mContext.getResources().getDrawable(R.drawable.ic_baseline_wrong_24));
-                mAnswerAdapter =new AnswerAdapter(currentItem.getListAnswer(),mContext,3,currentItem.getCorrectAnswer(),yourAnswerResult.get(position));
+//                holder.img_trueOrWrong.setImageDrawable(mContext.getResources().getDrawable(R.drawable.ic_baseline_wrong_24));
+//                mAnswerAdapter =new AnswerAdapter(currentItem.getListAnswer(),mContext,3,currentItem.getCorrectAnswer(),yourAnswerResult.get(position));
+                holder.img_trueOrWrong.setImageDrawable(mContext.getResources().getDrawable(R.drawable.ic_wrong));
+                mAnswerAdapter =new AnswerAdapter(currentItem.getListAnswer(),mContext,3,currentItem.getCorrectAnswer(),yourAnswerResult.get(position).getCorrectAnswer());
             }
             holder.mRecyclerView.setAdapter(mAnswerAdapter);
         }
@@ -155,12 +161,12 @@ public class DoTestAdapter extends RecyclerView.Adapter<DoTestAdapter.ViewHolder
 
 
     }
-    public List<QuestionAndAnswer>getData(){
-        return this.mListTest;
-    }
-    public List<String> getYourAnswer(){
-        return this.yourAnswer;
-    }
+//    public List<QuestionAndAnswer>getData(){
+//        return this.mListTest;
+//    }
+//    public List<String> getYourAnswer(){
+//        return this.yourAnswer;
+//    }
 
     @Override
     public int getItemCount() {

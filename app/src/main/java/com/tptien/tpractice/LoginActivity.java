@@ -32,7 +32,7 @@ public class LoginActivity extends AppCompatActivity {
     private ProgressBar progressBar;
     private SharedPreferences sharedPreferences;
     private SharedPreferences.Editor editor;
-    private Boolean isSaveAccount;
+    private Boolean isSaveAccount =false;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -71,7 +71,7 @@ public class LoginActivity extends AppCompatActivity {
             edt_userName.setText(sharedPreferences.getString("username",null));
             edt_password.setText(sharedPreferences.getString("password",null));
             cb_saveAccount.setChecked(true);
-            Log.d("save_account",sharedPreferences.getString("username",null));
+            //Log.d("save_account",sharedPreferences.getString("username",null));
         }
     }
     private void validateYourAccount(String username,String password){

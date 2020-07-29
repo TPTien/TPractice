@@ -84,7 +84,7 @@ public class AnswerAdapter extends RecyclerView.Adapter<AnswerAdapter.ViewHolder
 //
 //                }
 //            });
-            holder.radioButton.setClickable(false);
+            holder.radioButton.setChecked(position ==pos);
         }else if(select==1) {
             holder.edt_answer.setFocusable(false);
             holder.edt_answer.setClickable(false);

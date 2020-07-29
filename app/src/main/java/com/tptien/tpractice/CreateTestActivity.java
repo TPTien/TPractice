@@ -74,6 +74,7 @@ public class CreateTestActivity extends AppCompatActivity {
     private String dirPath="https://tstudy.000webhostapp.com/TStudy/image/";
     private String fullPath ="";
     private String idHost ="";
+    private int totalScore=0;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -98,16 +99,18 @@ public class CreateTestActivity extends AppCompatActivity {
                 finish();
             }
         });
-        tempList.add(new MultipleChoice("A."+" "));
+        //tempList.add(new MultipleChoice("A."+" "));
+        tempList.add(new MultipleChoice(""));
         fab_addQuestion =(FloatingActionButton)findViewById(R.id.fab_addQuestion);
         fab_addQuestion.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 ArrayList<MultipleChoice>temp =new ArrayList<>();
-                temp.add(new MultipleChoice("new answer"));
+                //temp.add(new MultipleChoice("new answer"));
+                temp.add(new MultipleChoice(""));
                 listQuestionAnswers.add(new QuestionAndAnswer("","","",null,temp));
                 mQuestionAnswerAdapter.notifyItemInserted(mQuestionAnswerAdapter.getItemCount()-1);
-                mQuestionAnswerAdapter.notifyDataSetChanged();
+                //mQuestionAnswerAdapter.notifyDataSetChanged();
                 //mRecyclerView.scrollToPosition(mQuestionAnswerAdapter.getItemCount() -1);
                 mRecyclerView.smoothScrollToPosition(mQuestionAnswerAdapter.getItemCount()-1);
             }
@@ -229,19 +232,21 @@ public class CreateTestActivity extends AppCompatActivity {
             for (int i= 0;i<listQuestionAnswers.size();i++){
                 listQuestionAnswers.get(i).setBitmap(null);
                 if(listQuestionAnswers.get(i).getScore().isEmpty()
-                        ||(listQuestionAnswers.get(i).getQuestion().isEmpty() && listQuestionAnswers.get(i).getImgUrlQuestion().isEmpty())
-                                    ||listQuestionAnswers.get(i).getListAnswer().size()==0
-                                    ||listQuestionAnswers.get(i).getCorrectAnswer().isEmpty()){
-                    Toast.makeText(this,"Vui lòng nhập đầy đủ thông tin!",Toast.LENGTH_SHORT).show();
+                        ||((listQuestionAnswers.get(i).getQuestion().equals("")) && listQuestionAnswers.get(i).getImgUrlQuestion()==null)
+                        ||listQuestionAnswers.get(i).getListAnswer().size()==0
+                        ||listQuestionAnswers.get(i).getCorrectAnswer()==null){
+                    Toast.makeText(this,"Vui lòng nhập đầy đủ thông tin câu hỏi!",Toast.LENGTH_SHORT).show();
                     mRecyclerView.smoothScrollToPosition(i);
                     return;
                 }else {
+                    totalScore+=Integer.parseInt(listQuestionAnswers.get(i).getScore());
                     if(listQuestionAnswers.get(i).getImgUrlQuestion() !=null){
                         listPicture.add(prepareFilePart("upload[]",listQuestionAnswers.get(i).getRealPathImage()));
                     }
 
                 }
             }
+            Log.d("ToltalScore", String.valueOf(totalScore));
             Gson gson = new Gson();
 //            JsonElement element = gson.toJsonTree(listQuestionAnswers, new TypeToken<List<QuestionAndAnswer>>() {}.getType());
 //
@@ -264,11 +269,13 @@ public class CreateTestActivity extends AppCompatActivity {
                 DataService dataService = APIService.getService();
                 Observable<String> observable =dataService.createTest(createBodyRequestJson(json.toString()),
                                                                         listPicture,
+                                                                        createBodyRequestString("1"),
                                                                         createBodyRequestString(topic),
                                                                         createBodyRequestString(name),
                                                                         createBodyRequestString(description),
                                                                         createBodyRequestString(idHost),
-                                                                        createBodyRequestString(timer));
+                                                                        createBodyRequestString(timer),
+                                                                        createBodyRequestString(String.valueOf(totalScore)));
                 observable.subscribeOn(Schedulers.newThread()).observeOn(AndroidSchedulers.mainThread())
                         .subscribe(new Observer<String>() {
                             @Override

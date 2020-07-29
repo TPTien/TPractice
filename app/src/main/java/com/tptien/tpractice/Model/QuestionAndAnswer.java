@@ -46,6 +46,7 @@ public class QuestionAndAnswer implements Parcelable {
         this.listAnswer = listAnswer;
     }
 
+
     protected QuestionAndAnswer(Parcel in) {
         idQuestion = in.readString();
         idTest = in.readString();
@@ -70,6 +71,12 @@ public class QuestionAndAnswer implements Parcelable {
             return new QuestionAndAnswer[size];
         }
     };
+
+    public QuestionAndAnswer(String idQuestion, String correctAnswer, String score) {
+            this.idQuestion =idQuestion;
+            this.correctAnswer=correctAnswer;
+            this.score=score;
+    }
 
     public String getRealPathImage() {
         return realPathImage;

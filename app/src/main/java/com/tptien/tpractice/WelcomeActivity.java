@@ -34,7 +34,7 @@ public class WelcomeActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_welcome);
         sharedPreferences =getSharedPreferences("loginAccount",MODE_PRIVATE);
-        isSaved =sharedPreferences.getBoolean("saveAccount",true);
+        isSaved =sharedPreferences.getBoolean("saveAccount",false);
         if(isSaved) {
             username =sharedPreferences.getString("username",null);
             password =sharedPreferences.getString("password",null);

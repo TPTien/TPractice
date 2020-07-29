@@ -42,7 +42,7 @@ public class RegistrationActivity extends AppCompatActivity {
         btn_register.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mProgressBar.setVisibility(View.VISIBLE);
+                //mProgressBar.setVisibility(View.VISIBLE);
                 nameDisplay=edt_nameDisplay.getText().toString();
                 userName=edt_userName.getText().toString();
                 password=edt_password.getText().toString();
@@ -53,6 +53,7 @@ public class RegistrationActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 startActivity(new Intent(RegistrationActivity.this,LoginActivity.class));
+                finish();
             }
         });
     }

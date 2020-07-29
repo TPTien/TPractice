@@ -112,12 +112,14 @@ public interface DataService {
 //            "Content-Type: application/json",
 //            "x-access-token: eyJhbGciOiJIU"
 //    })
-    Observable<String>createTest(@Part("json") RequestBody json,@Part List<MultipartBody.Part>file
+    Observable<String>createTest(@Part("json") RequestBody json,@Part List<MultipartBody.Part>file,
+                                 @Part("idcourse")RequestBody idCourse
                                 ,@Part("topic")RequestBody topic
                                 ,@Part("name")RequestBody nameTest
                                 ,@Part("description")RequestBody description,
                                  @Part("idHost")RequestBody idHost,
-                                 @Part("timer")RequestBody timer);
+                                 @Part("timer")RequestBody timer,
+                                 @Part("totalScore") RequestBody totalScore);
     @FormUrlEncoded
     @POST("getNewestTest.php")
     Observable<List<Test>> getNewestTest(@Field("idHost")String idHost,@Field("select")String select,@Field("idTest") String idTest);
@@ -144,6 +146,7 @@ public interface DataService {
                                            @Field("idTest")String idtest,
                                            @Field("timeDone") int timeDone,
                                            @Field("percentDone") String percentDone,
+                                           @Field("score") int score,
                                            @Field("numWrong")int numWrong,
                                            @Field("numTrue")int numTrue);
 }

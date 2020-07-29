@@ -28,12 +28,12 @@ import java.util.List;
 public class ResultActivity extends AppCompatActivity {
     private PieChart mPieChart;
     private Test test;
-    private  List<QuestionAndAnswer> questionAndAnswerList =new ArrayList<>();
-    private ArrayList<String>yourAnswer= new ArrayList<>();
-    private  int[]color =new int[]{Color.GREEN,Color.BLUE};
+    private List<QuestionAndAnswer> questionAndAnswerList =new ArrayList<>();
+    private ArrayList<QuestionAndAnswer> yourAnswer= new ArrayList<>();
+    private  int[]color =new int[]{Color.GREEN, Color.RED};
     private TextView tv_nameTest,tv_score,tv_timDone,tv_numTrue;
     private RecyclerView mRecyclerView;
-    private int timeDone,numRightQuestion,numWrongQuestion,score= 0;
+    private int timeDone,numRightQuestion,numWrongQuestion,score,totalScore= 0;
     private float percentDone =0;
     private DoTestAdapter mTestAdapter;
     private Button btn_detailResult;
@@ -50,12 +50,13 @@ public class ResultActivity extends AppCompatActivity {
         Log.d("listSizeInResult", String.valueOf(questionAndAnswerList.size()));
         test =bundle.getParcelable("testInfor");
         Log.d("testInResult",test.getName());
-        yourAnswer= bundle.getStringArrayList("listYourAnswer");
+        yourAnswer= bundle.getParcelableArrayList("yourAnswer");
         Log.d("yourAnswerInResult", String.valueOf(yourAnswer.size()));
         timeDone =bundle.getInt("timeDone");
         numWrongQuestion=bundle.getInt("numWrong");
         numRightQuestion=bundle.getInt("numRight");
         percentDone = bundle.getFloat("percent");
+        totalScore=bundle.getInt("totalScore");
         score = bundle.getInt("score");
 
         mPieChart =(PieChart)findViewById(R.id.pieChart);
@@ -88,7 +89,7 @@ public class ResultActivity extends AppCompatActivity {
         tv_timDone=(TextView)findViewById(R.id.tv_timeDone);
         tv_nameTest.setText(test.getName());
         tv_numTrue.setText("Số câu đúng: "+numRightQuestion+"/"+yourAnswer.size());
-        tv_score.setText("Điểm: "+score);
+        tv_score.setText("Điểm: "+score+"/"+totalScore);
         tv_timDone.setText("Thời gian hoàn thành: "+timeDone+" phút");
         btn_detailResult.setOnClickListener(new View.OnClickListener() {
             @Override
